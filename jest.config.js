@@ -13,4 +13,5 @@ export default {
     'app/App.jsx',
     'app.routes/App.routes.jsx',
   ],
+  moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
 };
