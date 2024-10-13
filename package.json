@@ -12,7 +12,6 @@
     "start": "json-server --watch db.json"
   },
   "dependencies": {
-    "@babel/preset-react": "^7.24.7",
     "json-server": "^0.17.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -23,6 +22,8 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+    "@babel/preset-env": "^7.25.8",
+    "@babel/preset-react": "^7.25.7",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.3.1",
@@ -31,6 +32,7 @@
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
+    "babel-jest": "^29.7.0",
     "cypress": "^13.15.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",

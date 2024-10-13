@@ -1,1 +1,2 @@
-export const url = import.meta.env.VITE_BACK_URL;
+const url = process.env.VITE_BACK_URL || 'http://localhost:3000';
+export { url };
