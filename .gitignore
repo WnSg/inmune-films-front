@@ -2,8 +2,7 @@
 
 *.spec.js
 *.spec.jsx
-*.test.js
-*.test.jsx
+
 
 # Dependency directories
 node_modules
