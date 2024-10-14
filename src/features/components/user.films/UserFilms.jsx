@@ -8,19 +8,24 @@ import { ComeBack } from '../come.back/ComeBack';
 export default function UserFilms() {
   const { handleLoadFilms } = useFilms();
   const { userFilms, token } = useUsers();
+
   useEffect(() => {
-    handleLoadFilms;
+    handleLoadFilms(); // Llama a la función
   }, [handleLoadFilms]);
-  const films = userFilms;
+
   return (
     <>
       <Header title={'Films'} subtitle={'Your Films'}></Header>
       <ComeBack></ComeBack>
       <ul className={style.list}>
         {token ? (
-          films.map((film) => <FilmCard key={film.id} item={film}></FilmCard>)
+          userFilms.length > 0 ? (
+            userFilms.map((film) => <FilmCard key={film.id} item={film}></FilmCard>)
+          ) : (
+            <p>Sorry, you haven't added any film yet</p>
+          )
         ) : (
-          <p>Sorry, you haven&apos;t added any film yet</p>
+          <p>Please log in to view your films</p>
         )}
       </ul>
     </>
