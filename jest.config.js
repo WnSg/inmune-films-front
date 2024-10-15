@@ -5,6 +5,7 @@ export default {
       '<rootDir>/__mocks__/assetsMock.js',
     '\\.(css|scss)$': 'identity-obj-proxy',
     '^config$': '<rootDir>/__mocks__/config.js',
+    '^@reducers(.*)$': '<rootDir>/src/reducers$1',
   },
   collectCoverageFrom: ['src/**/*.{js,jsx}'],
   coveragePathIgnorePatterns: [
@@ -16,5 +17,5 @@ export default {
   moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest',
-  },
+  },  
 };

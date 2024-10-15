@@ -1,11 +1,9 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom'; // Para manejar las rutas
-import List from '../list/List'; // Asegúrate de que la ruta sea correcta
+import { MemoryRouter } from 'react-router-dom';
+import List from '../list/List';
 import { useFilms } from '../../hooks/use.films';
 import { useUsers } from '../../hooks/use.users';
-import { FilmCard } from '../film/FilmCard';
-import { FilterFilms } from '../filter.films/FilterFilms';
 
 // Mock de hooks personalizados
 jest.mock('../../hooks/use.films');
@@ -14,11 +12,10 @@ jest.mock('../film/FilmCard', () => ({
   FilmCard: jest.fn(({ item }) => <div>{item.title}</div>), // Mock simplificado del componente FilmCard
 }));
 
-// Mock global de `useNavigate`
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate, // Mockeamos `useNavigate` una sola vez
+  useNavigate: () => mockNavigate, // Mock de `useNavigate`
 }));
 
 describe('List Component', () => {
@@ -26,13 +23,11 @@ describe('List Component', () => {
   const mockHandleLogoutUser = jest.fn();
 
   beforeEach(() => {
-    // Mock de `useFilms`
     useFilms.mockReturnValue({
       films: [{ id: 1, title: 'Inception' }, { id: 2, title: 'Interstellar' }],
       handleLoadFilms: mockHandleLoadFilms,
     });
 
-    // Mock de `useUsers`
     useUsers.mockReturnValue({
       token: 'mockedToken',
       currentUser: 'testUser',
@@ -41,7 +36,7 @@ describe('List Component', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks(); // Limpiar mocks entre cada prueba
+    jest.clearAllMocks();
   });
 
   it('should render the list of films correctly', () => {
@@ -51,7 +46,6 @@ describe('List Component', () => {
       </MemoryRouter>
     );
 
-    // Verificar que las películas están siendo renderizadas correctamente
     expect(screen.getByText(/Inception/i)).toBeInTheDocument();
     expect(screen.getByText(/Interstellar/i)).toBeInTheDocument();
   });
@@ -63,7 +57,6 @@ describe('List Component', () => {
       </MemoryRouter>
     );
 
-    // Verifica que se muestran los controles del usuario
     expect(screen.getByText(/Hi testUser/i)).toBeInTheDocument();
     expect(screen.getByText(/ADD A FILM/i)).toBeInTheDocument();
     expect(screen.getAllByText(/YOUR FILMS/i)[0]).toBeInTheDocument();
@@ -77,12 +70,100 @@ describe('List Component', () => {
       </MemoryRouter>
     );
 
-    // Simula el clic en el botón de logout
     const logoutButton = screen.getByText(/LOG OUT/i);
     fireEvent.click(logoutButton);
 
-    // Verifica que se llamaron las funciones correctas
     expect(mockHandleLogoutUser).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
+
+  it('should not show user controls when not logged in (no token)', () => {
+    // Simula la ausencia de token
+    useUsers.mockReturnValue({
+      token: null,
+      currentUser: null,
+      handleLogoutUser: jest.fn(),
+    });
+  
+    render(
+      <MemoryRouter>
+        <List />
+      </MemoryRouter>
+    );
+  
+    // Verifica que no se muestran los controles del usuario
+    expect(screen.queryByText(/Hi testUser/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/ADD A FILM/i)).not.toBeInTheDocument();
+    
+    // Busca específicamente un botón con el texto "YOUR FILMS"
+    const yourFilmsButton = screen.queryByRole('button', { name: /YOUR FILMS/i });
+    expect(yourFilmsButton).not.toBeInTheDocument();
+    
+    expect(screen.queryByText(/LOG OUT/i)).not.toBeInTheDocument();
+  });
+  
+  
+
+  it('should call handleLoadFilms on component mount', () => {
+    render(
+      <MemoryRouter>
+        <List />
+      </MemoryRouter>
+    );
+
+    // Verificar que handleLoadFilms fue llamado
+    expect(mockHandleLoadFilms).toHaveBeenCalled();
+  });
+
+  it('should render no films if the list is empty', () => {
+    // Simula una lista vacía de películas
+    useFilms.mockReturnValue({
+      films: [],
+      handleLoadFilms: mockHandleLoadFilms,
+    });
+  
+    render(
+      <MemoryRouter>
+        <List />
+      </MemoryRouter>
+    );
+  
+    // Verifica que el mensaje "No films available" se muestra
+    expect(screen.getByText(/No films available/i)).toBeInTheDocument();
+  });
+  
+
+  it('should render a message when there are no films available', () => {
+    // Actualizamos el mock para que la lista de películas esté vacía
+    useFilms.mockReturnValue({
+      films: [],
+      handleLoadFilms: mockHandleLoadFilms,
+    });
+  
+    render(
+      <MemoryRouter>
+        <List />
+      </MemoryRouter>
+    );
+  
+    // Verificar que el mensaje "No films available" se muestra cuando la lista está vacía
+    expect(screen.getByText(/No films available/i)).toBeInTheDocument();
+  });
+
+  it('should navigate when clicking on "ADD A FILM" and "YOUR FILMS"', () => {
+    render(
+      <MemoryRouter>
+        <List />
+      </MemoryRouter>
+    );
+  
+    // Simular el clic en "ADD A FILM"
+    fireEvent.click(screen.getByRole('button', { name: /ADD A FILM/i }));
+    expect(mockNavigate).toHaveBeenCalledWith('/create');
+  
+    // Simular el clic en "YOUR FILMS"
+    fireEvent.click(screen.getByRole('button', { name: /YOUR FILMS/i }));
+    expect(mockNavigate).toHaveBeenCalledWith('/myfilms');
+  });
+  
 });

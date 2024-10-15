@@ -70,12 +70,17 @@ export default function List() {
         )}
         <FilterFilms></FilterFilms>
         <div className={style.films}>
-          <ul>
-            {films.map((item) => (
-              <FilmCard key={item.id} item={item}></FilmCard>
-            ))}
-          </ul>
+          {films.length === 0 ? (
+            <p>No films available</p> // Asegúrate de que esta línea esté presente
+          ) : (
+            <ul>
+              {films.map((item) => (
+                <FilmCard key={item.id} item={item}></FilmCard>
+              ))}
+            </ul>
+          )}
         </div>
+
       </div>
     </>
   );
